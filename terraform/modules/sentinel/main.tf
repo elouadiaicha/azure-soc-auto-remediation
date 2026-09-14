@@ -65,13 +65,13 @@ AzureActivity
     _ResourceId
 QUERY
 
-#   # Génération automatique de l'Incident dans Sentinel
-#   incident_configuration {
-#     create_incident = true
-#     grouping {
-#       enabled = false
-#     }
-#   }
+  #   # Génération automatique de l'Incident dans Sentinel
+  #   incident_configuration {
+  #     create_incident = true
+  #     grouping {
+  #       enabled = false
+  #     }
+  #   }
 
   # Mapping d'entités (permet à Sentinel de relier l'attaquant/utilisateur et l'IP dans l'investigation)
   entity_mapping {
