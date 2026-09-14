@@ -1,0 +1,16 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+*.tfplan
+
+# Terraform variables pouvant contenir des secrets
+*.tfvars
+*.tfvars.json
+
+# Logs
+*.log
+
+# OS / IDE
+.vscode/
+.DS_Store
