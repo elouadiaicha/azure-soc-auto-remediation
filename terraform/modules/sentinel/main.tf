@@ -95,6 +95,18 @@ QUERY
   ]
 }
 
+# 1. Récupérer le Service Principal natif de Microsoft Sentinel
+data "azuread_service_principal" "sentinel_sp" {
+  display_name = "Azure Security Insights"
+}
+
+# 2. Accorder les permissions d'exécution de Playbook à Sentinel sur le RG
+resource "azurerm_role_assignment" "sentinel_playbook_permissions" {
+  scope                = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
+  role_definition_name = "Microsoft Sentinel Automation Contributor"
+  principal_id         = data.azuread_service_principal.sentinel_sp.object_id
+}
+
 # 2. Règle d'Automatisation Sentinel (Automation Rule)
 # C'est la passerelle entre l'Incident Sentinel et la Logic App
 resource "azurerm_sentinel_automation_rule" "remediate_ssh" {
@@ -124,6 +136,7 @@ resource "azurerm_sentinel_automation_rule" "remediate_ssh" {
   }
 
   depends_on = [
-    azurerm_sentinel_alert_rule_scheduled.nsg_ssh_alert
+    azurerm_sentinel_alert_rule_scheduled.nsg_ssh_alert,
+    azurerm_role_assignment.sentinel_playbook_permissions
   ]
 }
