@@ -18,6 +18,7 @@ module "remediation" {
   location            = data.azurerm_resource_group.rg.location
   nsg_name            = var.nsg_name
   logic_app_name      = "logic-soc-remediation"
+  subscription_id     = var.subscription_id
 
 }
 
