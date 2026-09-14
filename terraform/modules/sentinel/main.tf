@@ -148,3 +148,17 @@ resource "azurerm_sentinel_automation_rule" "remediate_ssh" {
     time_sleep.wait_rbac_propagation
   ]
 }
+
+resource "azurerm_sentinel_automation_rule" "remediate_ssh_demo" {
+  name                       = "d5e9f0b3-2c4a-5f6b-9d8e-0f1a2b3c4d5e"
+  log_analytics_workspace_id = azurerm_sentinel_log_analytics_workspace_onboarding.sentinel.workspace_id
+  display_name               = "DEMO - Trigger Logic App (sans filtre)"
+  order                      = 2
+  triggers_on                = "Incidents"
+  triggers_when              = "Created"
+
+  action_playbook {
+    logic_app_id = var.logic_app_id
+    order        = 1
+  }
+}
