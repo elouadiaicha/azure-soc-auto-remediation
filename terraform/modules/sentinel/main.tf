@@ -107,6 +107,14 @@ resource "azurerm_role_assignment" "sentinel_playbook_permissions" {
   principal_id         = data.azuread_service_principal.sentinel_sp.object_id
 }
 
+resource "time_sleep" "wait_rbac_propagation" {
+  create_duration = "60s"
+
+  depends_on = [
+    azurerm_role_assignment.sentinel_playbook_permissions
+  ]
+}
+
 # 2. Règle d'Automatisation Sentinel (Automation Rule)
 # C'est la passerelle entre l'Incident Sentinel et la Logic App
 resource "azurerm_sentinel_automation_rule" "remediate_ssh" {
@@ -137,6 +145,6 @@ resource "azurerm_sentinel_automation_rule" "remediate_ssh" {
 
   depends_on = [
     azurerm_sentinel_alert_rule_scheduled.nsg_ssh_alert,
-    azurerm_role_assignment.sentinel_playbook_permissions
+    time_sleep.wait_rbac_propagation
   ]
 }
