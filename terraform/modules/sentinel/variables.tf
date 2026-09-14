@@ -24,3 +24,13 @@ variable "subscription_id" {
   type        = string
   description = "ID de la souscription Azure pour la collecte des logs AzureActivity"
 }
+
+variable "logic_app_id" {
+  type        = string
+  description = "ID de la Logic App de remédiation"
+}
+
+variable "logic_app" {
+  type        = any
+  description = "Logic App de remédiation"
+}
