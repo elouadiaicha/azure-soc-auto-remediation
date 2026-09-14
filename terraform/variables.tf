@@ -9,8 +9,8 @@ variable "vnet_name" {
 }
 
 variable "nsg_name" {
-  type    = string
-  default = "nsg-soc-demo"
+  type        = string
+  default     = "nsg-soc-demo"
   description = "Nom du Network Security Group"
 }
 
