@@ -18,3 +18,8 @@ variable "logic_app_name" {
   type        = string
   default     = "logic-soc-remediation"
 }
+
+variable "subscription_id" {
+  description = "ID de la souscription Azure"
+  type        = string
+}
