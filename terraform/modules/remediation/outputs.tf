@@ -12,3 +12,7 @@ output "managed_identity_principal_id" {
   description = "Principal ID de la Managed Identity de la Logic App"
   value       = azurerm_logic_app_workflow.remediation.identity[0].principal_id
 }
+
+output "logic_app" {
+  value = azurerm_logic_app_workflow.remediation
+}
