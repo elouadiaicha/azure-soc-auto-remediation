@@ -7,7 +7,7 @@ variable "location" {
 variable "resource_group_name" {
   description = "Resource Group du projet SOC"
   type        = string
-  default     = "rg-soc-demo"
+  default     = "rg-DZ"
 }
 
 variable "vnet_name" {
