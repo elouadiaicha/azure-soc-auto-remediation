@@ -1,5 +1,5 @@
 output "resource_group_name" {
-  value = module.infrastructure.resource_group_name
+  value = data.azurerm_resource_group.rg.name
 }
 
 output "logic_app_name" {

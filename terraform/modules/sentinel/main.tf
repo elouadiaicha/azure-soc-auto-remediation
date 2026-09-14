@@ -94,3 +94,57 @@ QUERY
     azurerm_sentinel_log_analytics_workspace_onboarding.sentinel
   ]
 }
+
+# 1. Récupérer le Service Principal natif de Microsoft Sentinel
+data "azuread_service_principal" "sentinel_sp" {
+  display_name = "Azure Security Insights"
+}
+
+# 2. Accorder les permissions d'exécution de Playbook à Sentinel sur le RG
+resource "azurerm_role_assignment" "sentinel_playbook_permissions" {
+  scope                = "/subscriptions/${var.subscription_id}/resourceGroups/${var.resource_group_name}"
+  role_definition_name = "Microsoft Sentinel Automation Contributor"
+  principal_id         = data.azuread_service_principal.sentinel_sp.object_id
+}
+
+resource "time_sleep" "wait_rbac_propagation" {
+  create_duration = "60s"
+
+  depends_on = [
+    azurerm_role_assignment.sentinel_playbook_permissions
+  ]
+}
+
+# 2. Règle d'Automatisation Sentinel (Automation Rule)
+# C'est la passerelle entre l'Incident Sentinel et la Logic App
+resource "azurerm_sentinel_automation_rule" "remediate_ssh" {
+  name                       = "c4d8e9a2-1b3f-4e5a-8c7d-9e0f1a2b3c4d"
+  log_analytics_workspace_id = azurerm_sentinel_log_analytics_workspace_onboarding.sentinel.workspace_id
+  display_name               = "Auto-Remédiation : Trigger Logic App"
+  order                      = 1
+  triggers_on                = "Incidents"
+  triggers_when              = "Created"
+
+  # Format JSON conforme à l'API Azure Sentinel
+  condition_json = jsonencode([
+    {
+      conditionType = "Property"
+      conditionProperties = {
+        propertyName   = "IncidentRelatedAnalyticRuleIds"
+        operator       = "Contains"
+        propertyValues = [azurerm_sentinel_alert_rule_scheduled.nsg_ssh_alert.id]
+      }
+    }
+  ])
+
+  # Action : Exécuter le Playbook (Logic App)
+  action_playbook {
+    logic_app_id = var.logic_app_id
+    order        = 1
+  }
+
+  depends_on = [
+    azurerm_sentinel_alert_rule_scheduled.nsg_ssh_alert,
+    time_sleep.wait_rbac_propagation
+  ]
+}
